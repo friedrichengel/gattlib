@@ -91,11 +91,6 @@ void bt_uuid_to_uuid128(const bt_uuid_t *src, bt_uuid_t *dst)
 	}
 }
 
-static int bt_uuid128_cmp(const bt_uuid_t *u1, const bt_uuid_t *u2)
-{
-	return memcmp(&u1->value.u128, &u2->value.u128, sizeof(uint128_t));
-}
-
 int bt_uuid16_create(bt_uuid_t *btuuid, uint16_t value)
 {
 	memset(btuuid, 0, sizeof(bt_uuid_t));
@@ -119,54 +114,6 @@ int bt_uuid128_create(bt_uuid_t *btuuid, uint128_t value)
 	memset(btuuid, 0, sizeof(bt_uuid_t));
 	btuuid->type = BT_UUID128;
 	btuuid->value.u128 = value;
-
-	return 0;
-}
-
-int bt_uuid_cmp(const bt_uuid_t *uuid1, const bt_uuid_t *uuid2)
-{
-	bt_uuid_t u1, u2;
-
-	bt_uuid_to_uuid128(uuid1, &u1);
-	bt_uuid_to_uuid128(uuid2, &u2);
-
-	return bt_uuid128_cmp(&u1, &u2);
-}
-
-/*
- * convert the UUID to string, copying a maximum of n characters.
- */
-int bt_uuid_to_string(const bt_uuid_t *uuid, char *str, size_t n)
-{
-	bt_uuid_t tmp;
-	unsigned int   data0;
-	unsigned short data1;
-	unsigned short data2;
-	unsigned short data3;
-	unsigned int   data4;
-	unsigned short data5;
-	const uint8_t *data;
-
-	if (!uuid || uuid->type == BT_UUID_UNSPEC) {
-		snprintf(str, n, "NULL");
-		return -EINVAL;
-	}
-
-	/* Convert to 128 Bit format */
-	bt_uuid_to_uuid128(uuid, &tmp);
-	data = (uint8_t *) &tmp.value.u128;
-
-	memcpy(&data0, &data[0], 4);
-	memcpy(&data1, &data[4], 2);
-	memcpy(&data2, &data[6], 2);
-	memcpy(&data3, &data[8], 2);
-	memcpy(&data4, &data[10], 4);
-	memcpy(&data5, &data[14], 2);
-
-	snprintf(str, n, "%.8x-%.4x-%.4x-%.4x-%.8x%.4x",
-				ntohl(data0), ntohs(data1),
-				ntohs(data2), ntohs(data3),
-				ntohl(data4), ntohs(data5));
 
 	return 0;
 }
@@ -274,39 +221,4 @@ int bt_string_to_uuid(bt_uuid_t *uuid, const char *string)
 		return bt_string_to_uuid16(uuid, string);
 
 	return -EINVAL;
-}
-
-int bt_uuid_strcmp(const void *a, const void *b)
-{
-	bt_uuid_t u1, u2;
-
-	if (bt_string_to_uuid(&u1, a) < 0)
-		return -EINVAL;
-
-	if (bt_string_to_uuid(&u2, b) < 0)
-		return -EINVAL;
-
-	return bt_uuid_cmp(&u1, &u2);
-}
-
-int bt_uuid_to_le(const bt_uuid_t *src, void *dst)
-{
-	bt_uuid_t uuid;
-
-	switch (src->type) {
-	case BT_UUID16:
-		bt_put_le16(src->value.u16, dst);
-		return 0;
-	case BT_UUID32:
-		bt_uuid32_to_uuid128(src, &uuid);
-		src = &uuid;
-		/* Fallthrough */
-	case BT_UUID128:
-		/* Convert from 128-bit BE to LE */
-		bswap_128(&src->value.u128, dst);
-		return 0;
-	case BT_UUID_UNSPEC:
-	default:
-		return -EINVAL;
-	}
 }
