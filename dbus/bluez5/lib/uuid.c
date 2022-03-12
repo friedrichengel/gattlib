@@ -22,66 +22,12 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <bluetooth/bluetooth.h>
 
 #include "uuid.h"
-
-static uint128_t bluetooth_base_uuid = {
-	.data = {	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00,
-			0x80, 0x00, 0x00, 0x80, 0x5F, 0x9B, 0x34, 0xFB }
-};
-
-#define BASE_UUID16_OFFSET	2
-#define BASE_UUID32_OFFSET	0
-
-void bt_uuid_to_uuid128(const bt_uuid_t *src, bt_uuid_t *dst){
-	switch (src->type) {
-		case BT_UUID128:
-			*dst = *src;
-			break;
-		case BT_UUID32:
-			dst->value.u128 = bluetooth_base_uuid;
-			dst->type = BT_UUID128;
-			uint32_t be32 = htonl(src->value.u32);
-			memcpy(&dst->value.u128.data[BASE_UUID32_OFFSET], &be32, sizeof(be32));
-			break;
-		case BT_UUID16:
-			dst->value.u128 = bluetooth_base_uuid;
-			dst->type = BT_UUID128;
-			uint16_t be16 = htons(src->value.u16);
-			memcpy(&dst->value.u128.data[BASE_UUID16_OFFSET], &be16, sizeof(be16));
-			break;
-		case BT_UUID_UNSPEC:
-		default:
-			break;
-	}
-}
-
-// int bt_uuid_create(bt_uuid_t *btuuid, uint bt_uuid_type, int value){
-// 	memset(btuuid, 0, sizeof(bt_uuid_t));
-// 	switch (bt_uuid_type) {
-// 		case BT_UUID128:
-// 			btuuid->type = BT_UUID128;
-// 			btuuid->value.u128 = (uint128_t)value;
-// 			break;
-// 		case BT_UUID32:
-// 			btuuid->type = BT_UUID32;
-// 			btuuid->value.u32 = (uint32_t)value;
-// 			break;
-// 		case BT_UUID16:
-// 			btuuid->type = BT_UUID16;
-// 			btuuid->value.u16 = (uint16_t)value;
-// 			break;
-// 	}			
-// 	return 0;
-// }
 
 int bt_uuid16_create(bt_uuid_t *btuuid, uint16_t value)
 {
