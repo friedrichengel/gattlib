@@ -19,7 +19,7 @@
 #include "org-bluez-gattdescriptor1.h"
 #include "org-bluez-gattservice1.h"
 
-#include "bluez5/lib/uuid.h"
+#include "gattlib_uuid.h"
 
 #define BLUEZ_VERSIONS(major, minor)	(((major) << 8) | (minor))
 #define BLUEZ_VERSION					BLUEZ_VERSIONS(BLUEZ_VERSION_MAJOR, BLUEZ_VERSION_MINOR)

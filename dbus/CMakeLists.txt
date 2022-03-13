@@ -71,7 +71,7 @@ set(gattlib_SRCS gattlib.c
                  gattlib_char.c
                  gattlib_notification.c
                  gattlib_stream.c
-                 bluez5/lib/uuid.c
+                 gattlib_uuid.c
                  ${CMAKE_CURRENT_LIST_DIR}/../common/gattlib_common.c
                  ${CMAKE_CURRENT_LIST_DIR}/../common/gattlib_eddystone.c
                  ${CMAKE_CURRENT_LIST_DIR}/../common/logging_backend/${GATTLIB_LOG_BACKEND}/gattlib_logging.c
