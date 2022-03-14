@@ -33,11 +33,9 @@ int bt_string_to_uuid(bt_uuid_t *uuid, const char *string){
 		}else if (sscanf(string, "%08x-%04hx-%04hx-%04hx-%08x%04hx", &data0, &data1, &data2, &data3, &data4, &data5) == 6){
 			uuid_type = 128;
 		}
-	}
-	if (strlen(string) == 8 || strlen(string) == 10){
+	}else if (strlen(string) == 8 || strlen(string) == 10){
 		uuid_type = 32;
-	}
-	if (strlen(string) == 4 || strlen(string) == 6){
+	}else if (strlen(string) == 4 || strlen(string) == 6){
 		uuid_type = 16;
 	}
 
