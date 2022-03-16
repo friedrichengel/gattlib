@@ -20,7 +20,7 @@
 
 int bt_string_to_uuid(bt_uuid_t *uuid, const char *string){
 	unsigned char uuid_type = 0;
-	uint32_t data0, data4;
+	uint32_t data0, data4, u32;
 	uint16_t data1, data2, data3, data5, u16;
 	uint128_t u128;
 	uint8_t *val = (uint8_t *) &u128;
@@ -42,17 +42,19 @@ int bt_string_to_uuid(bt_uuid_t *uuid, const char *string){
 	memset(uuid, 0, sizeof(bt_uuid_t));
 	switch (uuid_type){
 		case 16:
+			u16 = strtol(string, &endptr, 16);
 			if (endptr && (*endptr == '\0' || *endptr == '-')) {
 				uuid->type = BT_UUID16;
-				uuid->value.u16 = strtol(string, &endptr, 16);
+				uuid->value.u16 = u16;
 				return 0;
 			}
 			break;
 
 		case 32:
+			u32 = strtol(string, &endptr, 16);
 			if (endptr && *endptr == '\0') {
 				uuid->type = BT_UUID32;
-				uuid->value.u32 = strtol(string, &endptr, 16);				
+				uuid->value.u32 = u32;				
 				return 0;
 			}
 			break;
@@ -78,9 +80,10 @@ int bt_string_to_uuid(bt_uuid_t *uuid, const char *string){
 			break;
 
 		case 255:
+			u16 = strtol(string, &endptr, 16);
 			if (endptr && (*endptr == '\0' || *endptr == '-')) {
 				uuid->type = BT_UUID16;
-				uuid->value.u16 = strtol(string + 4, &endptr, 16);
+				uuid->value.u16 = u16;
 				return 0;
 			}
 			break;
